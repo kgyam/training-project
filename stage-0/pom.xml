@@ -7,9 +7,10 @@
     <groupId>org.example</groupId>
     <artifactId>stage-0</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <modules>
         <module>customer-web-mvc</module>
+        <module>user-web</module>
     </modules>
 
 
