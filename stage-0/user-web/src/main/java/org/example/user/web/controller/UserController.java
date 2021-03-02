@@ -23,10 +23,10 @@ public class UserController implements PageController {
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")
     public String registry(HttpServletRequest request, HttpServletResponse response) {
-        String nickName = request.getParameter ("nickName");
-        String email = request.getParameter ("email");
-        String password = request.getParameter ("password");
-        String phoneNum = request.getParameter ("phoneNum");
+        String nickName = (String)request.getAttribute ("nickName");
+        String email = (String)request.getAttribute ("email");
+        String password = (String)request.getAttribute ("password");
+        String phoneNum =  (String)request.getAttribute ("phoneNum");
         User user = new User (nickName, password, email, phoneNum);
         userService.register (user);
         return "success.jsp";

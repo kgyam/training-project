@@ -12,16 +12,16 @@ import java.util.logging.Logger;
  * @since
  */
 public class DatabaseUserRepository implements UserRepository {
-    private static Logger LOGGER = Logger.getLogger (DatabaseUserRepository.class.getName ());
+    private static Logger LOGGER = Logger.getLogger(DatabaseUserRepository.class.getName());
     private static final String TABLE_NAME = "user";
-    private static DBConnectionManager dbConnectionManager = new DBConnectionManager ();
+    private static DBConnectionManager dbConnectionManager = new DBConnectionManager();
 
     @Override
     public boolean save(User user) {
         try {
-            dbConnectionManager.save (user.getClass (), user, TABLE_NAME);
+            dbConnectionManager.save(user, TABLE_NAME);
         } catch (Exception e) {
-            throw new RuntimeException (e.getCause ());
+            throw new RuntimeException(e.getCause());
         }
         return true;
     }
