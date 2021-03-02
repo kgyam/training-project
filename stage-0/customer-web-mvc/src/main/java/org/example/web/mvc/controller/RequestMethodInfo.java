@@ -3,14 +3,14 @@ package org.example.web.mvc.controller;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class RequestMethodInfo {
 
-    public RequestMethodInfo(String requestPath, HttpMethod[] httpMethods, Class[] parameterTypes, Method requestMethod, Controller controller) {
+    public RequestMethodInfo(String requestPath, HttpMethod[] httpMethods, Method requestMethod, Controller controller) {
         this.requestPath = requestPath;
         this.httpMethods = httpMethods;
         this.requestMethod = requestMethod;
-        this.parameterTypes = parameterTypes;
         this.controller = controller;
     }
 
@@ -32,10 +32,6 @@ public class RequestMethodInfo {
      */
     private Controller controller;
 
-    /*
-    方法参数类型
-     */
-    private Class[] parameterTypes;
 
     public String getRequestPath() {
         return requestPath;
@@ -51,11 +47,6 @@ public class RequestMethodInfo {
 
     public HttpMethod[] getHttpMethods() {
         return httpMethods;
-    }
-
-
-    public Class[] getParameterTypes() {
-        return parameterTypes;
     }
 
     /**
@@ -74,5 +65,16 @@ public class RequestMethodInfo {
             }
         }
         return false;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RequestMethodInfo{" +
+                "requestPath='" + requestPath + '\'' +
+                ", httpMethods=" + Arrays.toString (httpMethods) +
+                ", requestMethod=" + requestMethod +
+                ", controller=" + controller +
+                '}';
     }
 }

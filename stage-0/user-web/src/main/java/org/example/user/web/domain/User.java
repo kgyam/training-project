@@ -1,31 +1,49 @@
 package org.example.user.web.domain;
 
+import java.util.Objects;
+
+/**
+ * 用户领域对象
+ *
+ * @since 1.0
+ */
 public class User {
-    private String id;
-    private String nickname;
+
+    private Long id;
+
+    private String name;
+
     private String password;
+
+    private String email;
+
     private String phoneNumber;
 
 
-    /**
-     * id应用户实例化而随之创建。为确保id唯一性，不提供setter方法防止id篡改
-     *
-     * @param id
-     */
-    public User(String id) {
-        this.id = id;
+    public User() {
     }
 
-    public String getId() {
+    public User(String name, String password, String email, String phoneNumber) {
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public String getNickname() {
-        return nickname;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
@@ -36,6 +54,14 @@ public class User {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -44,13 +70,30 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass () != o.getClass ()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals (id, user.id) && Objects.equals (name, user.name) && Objects.equals (password, user.password) && Objects.equals (email, user.email) && Objects.equals (phoneNumber, user.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash (id, name, password, email, phoneNumber);
+    }
 
     @Override
     public String toString() {
         return "User{" +
-                "id='" + id + '\'' +
-                ", nickname='" + nickname + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }

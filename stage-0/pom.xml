@@ -4,15 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>stage-0</artifactId>
-    <packaging>pom</packaging>
+    <groupId>org.kgyam</groupId>
+    <artifactId>user-platform</artifactId>
+    <name>User Platform ${revision}</name>
     <version>${revision}</version>
+    <packaging>pom</packaging>
+
     <modules>
         <module>customer-web-mvc</module>
         <module>user-web</module>
     </modules>
-
 
     <properties>
         <revision>v1-SNAPSHOT</revision>
@@ -36,7 +37,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
 
     <!-- Artifacts 依赖版本管理 -->
     <dependencyManagement>

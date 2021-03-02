@@ -1,9 +1,9 @@
 package org.example.user.web.controller;
 
-import org.example.web.mvc.controller.Controller;
-import org.example.web.mvc.controller.HttpMethod;
-import org.example.web.mvc.controller.RequestMapping;
-import org.example.web.mvc.controller.RequestMethod;
+import org.example.user.web.domain.User;
+import org.example.user.web.service.UserService;
+import org.example.user.web.service.impl.UserServiceImpl;
+import org.example.web.mvc.controller.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,18 +15,27 @@ import java.util.logging.Logger;
  * @since
  */
 @RequestMapping(value = "/user")
-public class UserController implements Controller {
+public class UserController implements PageController {
 
     private static final Logger LOGGER = Logger.getLogger (UserController.class.getName ());
+    private static UserService userService = new UserServiceImpl ();
 
-    @RequestMethod({HttpMethod.POST,HttpMethod.GET})
-    @RequestMapping(value = "/register")
-    public String register(HttpServletRequest request, HttpServletResponse response) {
-        String username = request.getParameter ("username");
+    @RequestMethod({HttpMethod.POST})
+    @RequestMapping(value = "/registry")
+    public String registry(HttpServletRequest request, HttpServletResponse response) {
+        String nickName = request.getParameter ("nickName");
+        String email = request.getParameter ("email");
         String password = request.getParameter ("password");
-        LOGGER.info ("register..");
-        LOGGER.info ("username: " + username + ",password: " + password);
-        return "";
+        String phoneNum = request.getParameter ("phoneNum");
+        User user = new User (nickName, password, email, phoneNum);
+        userService.register (user);
+        return "success.jsp";
     }
 
+
+    @RequestMethod({HttpMethod.GET})
+    @RequestMapping(value = "/registry-form")
+    public String registryForm(HttpServletRequest request, HttpServletResponse response) {
+        return "registry-form.jsp";
+    }
 }
