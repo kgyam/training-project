@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean register(User user) {
-        // TODO: 2021/3/2 repository层持久化
         user.setPassword (encrypt (user.getPassword ()));
         return userRepository.save (user);
     }

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class DatabaseUserRepository implements UserRepository {
     private static Logger LOGGER = Logger.getLogger(DatabaseUserRepository.class.getName());
-    private static final String TABLE_NAME = "user";
+    private static final String TABLE_NAME = "users";
     private static DBConnectionManager dbConnectionManager = new DBConnectionManager();
 
     @Override

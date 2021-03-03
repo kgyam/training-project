@@ -1,5 +1,6 @@
 package org.example.user.web.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.example.user.web.domain.User;
 import org.example.user.web.service.UserService;
 import org.example.user.web.service.impl.UserServiceImpl;
@@ -7,6 +8,7 @@ import org.example.web.mvc.controller.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 /**
@@ -22,14 +24,25 @@ public class UserController implements PageController {
 
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")
-    public String registry(HttpServletRequest request, HttpServletResponse response) {
-        String nickName = (String)request.getAttribute ("nickName");
-        String email = (String)request.getAttribute ("email");
-        String password = (String)request.getAttribute ("password");
-        String phoneNum =  (String)request.getAttribute ("phoneNum");
-        User user = new User (nickName, password, email, phoneNum);
-        userService.register (user);
-        return "success.jsp";
+    public String registry(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        String name = request.getParameter ("name");
+        name = new String (name.getBytes ("iso8859-1"), "UTF-8");
+        String email = request.getParameter ("email");
+        String password = request.getParameter ("password");
+        String phoneNum = request.getParameter ("phoneNum");
+
+        if (StringUtils.isBlank (name) || StringUtils.isBlank (email)
+                || StringUtils.isBlank (phoneNum) || StringUtils.isBlank (password)) {
+            return "failed.jsp";
+        }
+        User user = new User (name, password, email, phoneNum);
+        LOGGER.info (user.toString ());
+        if (userService.register (user)) {
+            response.setCharacterEncoding ("utf-8");
+            request.setAttribute ("user", user);
+            return "success.jsp";
+        }
+        return "";
     }
 
 

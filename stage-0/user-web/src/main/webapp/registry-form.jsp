@@ -22,19 +22,19 @@
 <div class="container">
     <form class="form-signin" action="http://localhost:8080/user/registry" method="post">
         <h1 class="h3 mb-3 font-weight-normal">注册</h1>
-        <label for="inputEmail" class="sr-only">请输入电子邮件</label> <input
-            type="email" id="inputEmail" class="form-control"
-            placeholder="请输入电子邮件" required autofocus>
-        <label for="inputNickname" class="sr-only">请输入用户名</label> <input
-            type="text" id="inputNickname" class="form-control"
-            placeholder="请输入用户名" required autofocus>
-        <label for="inputPhoneNum" class="sr-only">请输入手机号码</label> <input
-            type="number" id="inputPhoneNum" class="form-control"
-            placeholder="请输入手机号码" required autofocus>
+        <label for="email" class="sr-only">请输入电子邮件</label> <input
+            type="email" id="email" name="email" class="form-control"
+            placeholder="请输入电子邮件" required autofocus/>
+        <label for="name" class="sr-only">请输入用户名</label> <input
+            type="text" id="name" name="name" class="form-control"
+            placeholder="请输入用户名" required autofocus/>
+        <label for="phoneNum" class="sr-only">请输入手机号码</label> <input
+            type="number" id="phoneNum" name="phoneNum" class="form-control"
+            placeholder="请输入手机号码" required autofocus/>
         <label
-                for="inputPassword" class="sr-only">Password</label> <input
-            type="password" id="inputPassword" class="form-control"
-            placeholder="请输入密码" required>
+                for="password" class="sr-only">Password</label> <input
+            type="password" id="password" name="password" class="form-control"
+            placeholder="请输入密码" required/>
         <div class="checkbox mb-3">
             <label> <input type="checkbox" value="remember-me">
                 Remember me
