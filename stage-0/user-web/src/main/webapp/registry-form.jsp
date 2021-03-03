@@ -1,3 +1,4 @@
+
 <head>
     <jsp:directive.include file="/WEB-INF/jsp/prelude/include-head-meta.jspf"/>
     <title>My Home Page</title>
@@ -20,7 +21,7 @@
 </head>
 <body>
 <div class="container">
-    <form class="form-signin" action="http://localhost:8080/user/registry" method="post">
+    <form class="form-signin" action="http://localhost:8080/user/registry" method="post" accept-charset="UTF-8">
         <h1 class="h3 mb-3 font-weight-normal">注册</h1>
         <label for="email" class="sr-only">请输入电子邮件</label> <input
             type="email" id="email" name="email" class="form-control"

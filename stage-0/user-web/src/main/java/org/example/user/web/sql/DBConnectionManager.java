@@ -69,7 +69,7 @@ public class DBConnectionManager {
             statement = connection.createStatement ();
             // 删除 users 表
             // false
-            LOGGER.info ("" + statement.execute (DROP_USERS_TABLE_DDL_SQL));
+//            LOGGER.info ("" + statement.execute (DROP_USERS_TABLE_DDL_SQL));
             // 创建 users 表
             // false
             LOGGER.info ("" + statement.execute (CREATE_USERS_TABLE_DDL_SQL));
