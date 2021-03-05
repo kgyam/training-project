@@ -6,7 +6,13 @@
               description="Derby database for User Platform"
               maxActive="100" maxIdle="30" maxWait="10000"
               driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
-              password="password"
-              username="username"
+              password=""
+              username=""
               url="jdbc:derby:/db/user-platform;create=true"/>
+
+
+    <Resource name="bean/DBConnectionManager" auth="Container"
+              type="org.example.user.web.sql.DBConnectionManager"
+              factory="org.apache.naming.factory.BeanFactory"/>
+
 </Context>

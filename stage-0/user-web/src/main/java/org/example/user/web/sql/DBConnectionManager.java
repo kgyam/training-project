@@ -1,18 +1,15 @@
 package org.example.user.web.sql;
 
-import org.example.user.web.domain.User;
+import org.example.user.web.context.ComponentContext;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,8 +20,9 @@ import java.util.logging.Logger;
 public class DBConnectionManager {
 
     private static final Logger LOGGER = Logger.getLogger (DBConnectionManager.class.getName ());
-    private static Connection connection;
-
+    private Connection connection;
+    public static final String SCHEMA = "jdbc/UserPlatformDB";
+    public static final String CONNECTION_MANAGER="bean/DBConnectionManager";
     private static String url = "jdbc:derby:/db/user-platform;create=true";
 
 
@@ -38,45 +36,41 @@ public class DBConnectionManager {
             "phoneNumber VARCHAR(64) NOT NULL" +
             ")";
 
-    static {
-        try {
-            connection = loadByClassLoader ();
-        } catch (Exception e) {
-            throw new RuntimeException (e);
-        }
-    }
-
-    private static Connection loadByClassLoader() throws ClassNotFoundException, SQLException {
-        Class.forName ("org.apache.derby.jdbc.EmbeddedDriver");
-        return connection = DriverManager.getConnection (url);
-    }
-
-
-    private static Connection loadByJndi() throws NamingException, SQLException {
-        Context ic = new InitialContext ();
-        DataSource ds = (DataSource) ic.lookup ("java:comp/env/jdbc/UserPlatformDB");
-        return ds.getConnection ();
-    }
 
     public DBConnectionManager() {
-        init ();
-    }
 
-
-    private void init() {
-        Statement statement = null;
+        DataSource ds = ComponentContext.getInstance (SCHEMA);
         try {
-            statement = connection.createStatement ();
-            // 删除 users 表
-            // false
-            LOGGER.info ("" + statement.execute (DROP_USERS_TABLE_DDL_SQL));
-            // 创建 users 表
-            // false
-            LOGGER.info ("" + statement.execute (CREATE_USERS_TABLE_DDL_SQL));
-        } catch (SQLException e) {
-            throw new RuntimeException (e.getCause ());
+            this.connection = ds.getConnection ();
+        } catch (SQLException throwables) {
+            LOGGER.log (Level.SEVERE, throwables.getMessage (), throwables);
+            throw new RuntimeException (throwables);
         }
     }
+
+//    private static Connection loadByJndi() throws NamingException, SQLException {
+//        Context ic = new InitialContext ();//
+//        ic = (Context) ic.lookup ("java:comp/env");
+//        DataSource ds = (DataSource) ic.lookup ("jdbc/UserPlatformDB");
+//
+//        return ds.getConnection ();
+//    }
+
+//
+//    private void init() {
+//        Statement statement = null;
+//        try {
+//            statement = connection.createStatement ();
+//            // 删除 users 表
+//            // false
+//            LOGGER.info ("" + statement.execute (DROP_USERS_TABLE_DDL_SQL));
+//            // 创建 users 表
+//            // false
+//            LOGGER.info ("" + statement.execute (CREATE_USERS_TABLE_DDL_SQL));
+//        } catch (SQLException e) {
+//            throw new RuntimeException (e.getCause ());
+//        }
+//    }
 
     public void releaseConnection() {
         if (connection != null) {
@@ -86,14 +80,6 @@ public class DBConnectionManager {
                 throw new RuntimeException (e.getCause ());
             }
         }
-    }
-
-
-    private void test() throws SQLException {
-        Statement statement = connection.createStatement ();
-        String sql = "insert into users (name,password,email,phoneNumber) VALUES ('gk','1234','email','123450')";
-        System.out.println (statement.executeUpdate (sql));
-
     }
 
 
@@ -138,14 +124,5 @@ public class DBConnectionManager {
         LOGGER.info ("save SQL: [" + insertSQL + "]");
         int i = statement.executeUpdate (insertSQL);
         return true;
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        DBConnectionManager dbConnectionManager = new DBConnectionManager ();
-        User user = new User ("kg", "123", "kgyam0122@153.com", "1233444");
-        boolean result = dbConnectionManager.save (user, "users");
-        System.out.println (result);
-
     }
 }
