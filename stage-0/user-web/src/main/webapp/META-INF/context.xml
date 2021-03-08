@@ -11,8 +11,28 @@
               url="jdbc:derby:/db/user-platform;create=true"/>
 
 
-    <Resource name="bean/DBConnectionManager" auth="Container"
-              type="org.example.user.web.sql.DBConnectionManager"
+    <!--    <Resource name="bean/DBConnectionManager" auth="Container"-->
+    <!--              type="org.example.user.web.sql.DBConnectionManager"-->
+    <!--              factory="org.apache.naming.factory.BeanFactory"/>-->
+
+
+    <Resource name="bean/UserService" auth="Container"
+              type="org.example.user.web.service.impl.UserServiceImpl"
+              factory="org.apache.naming.factory.BeanFactory"/>
+
+    <Resource name="bean/UserRepository" auth="Container"
+              type="org.example.user.web.repository.DatabaseUserRepository"
+              factory="org.apache.naming.factory.BeanFactory"/>
+
+    <Resource name="bean/UserController" auth="Container"
+              type="org.example.user.web.controller.UserController"
+              factory="org.apache.naming.factory.BeanFactory"/>
+
+
+    <Resource name="bean/EntityManager" auth="Container"
+              type="org.example.user.web.orm.DelegatingEntityManager"
+              persistenceUnitName="emf"
+              propertiesLocation="META-INF/jpa-datasource.properties"
               factory="org.apache.naming.factory.BeanFactory"/>
 
 </Context>

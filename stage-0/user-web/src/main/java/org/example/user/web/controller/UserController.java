@@ -5,6 +5,7 @@ import org.example.user.web.domain.*;
 import org.example.user.web.service.UserService;
 import org.example.web.mvc.controller.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,8 @@ import java.util.logging.Logger;
 public class UserController implements PageController {
 
     private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
-    private static UserService userService;
+    @Resource(name = "bean/UserService")
+    private UserService userService;
 
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")

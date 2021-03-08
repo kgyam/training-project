@@ -17,12 +17,14 @@ import java.util.logging.Logger;
  * @date 2021-03-02 17:41
  * @since
  */
+
+@Deprecated
 public class DBConnectionManager {
 
-    private static final Logger LOGGER = Logger.getLogger (DBConnectionManager.class.getName ());
+    private static final Logger LOGGER = Logger.getLogger(DBConnectionManager.class.getName());
     private Connection connection;
     public static final String SCHEMA = "jdbc/UserPlatformDB";
-    public static final String CONNECTION_MANAGER="bean/DBConnectionManager";
+    public static final String CONNECTION_MANAGER = "bean/DBConnectionManager";
     private static String url = "jdbc:derby:/db/user-platform;create=true";
 
 
@@ -75,9 +77,9 @@ public class DBConnectionManager {
     public void releaseConnection() {
         if (connection != null) {
             try {
-                connection.close ();
+                connection.close();
             } catch (SQLException e) {
-                throw new RuntimeException (e.getCause ());
+                throw new RuntimeException(e.getCause());
             }
         }
     }
@@ -93,36 +95,36 @@ public class DBConnectionManager {
      */
     public boolean save(Object o, String tableName) throws Exception {
 
-        Statement statement = connection.createStatement ();
-        Class clazz = o.getClass ();
-        LOGGER.info ("class :" + clazz);
-        BeanInfo userBeanInfo = Introspector.getBeanInfo (clazz, Object.class);
-        StringBuilder insertUsersSQLBuilder = new StringBuilder ("INSERT INTO ");
-        insertUsersSQLBuilder.append (tableName).append (" (");
-        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors ()) {
-            String fieldName = propertyDescriptor.getName ();
-            if ("id".equals (fieldName)) {
+        Statement statement = connection.createStatement();
+        Class clazz = o.getClass();
+        LOGGER.info("class :" + clazz);
+        BeanInfo userBeanInfo = Introspector.getBeanInfo(clazz, Object.class);
+        StringBuilder insertUsersSQLBuilder = new StringBuilder("INSERT INTO ");
+        insertUsersSQLBuilder.append(tableName).append(" (");
+        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors()) {
+            String fieldName = propertyDescriptor.getName();
+            if ("id".equals(fieldName)) {
                 continue;
             }
-            Class fieldType = propertyDescriptor.getPropertyType ();
-            insertUsersSQLBuilder.append (fieldName).append (",");
+            Class fieldType = propertyDescriptor.getPropertyType();
+            insertUsersSQLBuilder.append(fieldName).append(",");
         }
-        insertUsersSQLBuilder.deleteCharAt (insertUsersSQLBuilder.length () - 1)
-                .append (") VALUES (");
+        insertUsersSQLBuilder.deleteCharAt(insertUsersSQLBuilder.length() - 1)
+                .append(") VALUES (");
 
-        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors ()) {
-            if ("id".equals (propertyDescriptor.getName ())) {
+        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors()) {
+            if ("id".equals(propertyDescriptor.getName())) {
                 continue;
             }
-            Object value = propertyDescriptor.getReadMethod ().invoke (o);
-            insertUsersSQLBuilder.append ("'").append (value).append ("'").append (",");
+            Object value = propertyDescriptor.getReadMethod().invoke(o);
+            insertUsersSQLBuilder.append("'").append(value).append("'").append(",");
         }
-        insertUsersSQLBuilder.deleteCharAt (insertUsersSQLBuilder.length () - 1)
-                .append (")");
+        insertUsersSQLBuilder.deleteCharAt(insertUsersSQLBuilder.length() - 1)
+                .append(")");
 
-        String insertSQL = insertUsersSQLBuilder.toString ();
-        LOGGER.info ("save SQL: [" + insertSQL + "]");
-        int i = statement.executeUpdate (insertSQL);
+        String insertSQL = insertUsersSQLBuilder.toString();
+        LOGGER.info("save SQL: [" + insertSQL + "]");
+        int i = statement.executeUpdate(insertSQL);
         return true;
     }
 }

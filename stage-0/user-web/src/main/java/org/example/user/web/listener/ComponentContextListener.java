@@ -14,18 +14,18 @@ import static org.example.user.web.context.ComponentContext.COMPONENT_CONTEXT;
  * @since
  */
 public class ComponentContextListener implements ServletContextListener {
-    private ServletContext servletContext;
+    ComponentContext componentContext;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext servletContext = sce.getServletContext();
         ComponentContext componentContext = new ComponentContext(servletContext);
-        this.servletContext = servletContext;
+        this.componentContext = componentContext;
+
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        ComponentContext componentContext = (ComponentContext) servletContext.getAttribute(COMPONENT_CONTEXT);
         componentContext.destroy();
     }
 }

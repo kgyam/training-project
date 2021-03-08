@@ -1,9 +1,9 @@
 package org.example.user.web.repository;
 
-import org.example.user.web.context.ComponentContext;
-import org.example.user.web.domain.*;
-import org.example.user.web.sql.*;
+import org.example.user.web.domain.User;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -13,14 +13,16 @@ import java.util.logging.Logger;
  * @since
  */
 public class DatabaseUserRepository implements UserRepository {
-    private static Logger LOGGER = Logger.getLogger(DatabaseUserRepository.class.getName());
-    private static final String TABLE_NAME = "users";
-    private static DBConnectionManager dbConnectionManager;
+    private static Logger logger = Logger.getLogger(DatabaseUserRepository.class.getName());
+
+    @Resource(name = "bean/EntityManager")
+    private EntityManager entityManager;
 
     @Override
     public boolean save(User user) {
         try {
-            dbConnectionManager.save(user, TABLE_NAME);
+            logger.info("save user:" + user);
+            entityManager.persist(user);
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
         }

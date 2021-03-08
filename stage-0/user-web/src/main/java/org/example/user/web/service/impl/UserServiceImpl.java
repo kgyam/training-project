@@ -1,16 +1,25 @@
 package org.example.user.web.service.impl;
 
 import org.example.user.web.domain.*;
+import org.example.user.web.init.DisposableComponent;
 import org.example.user.web.repository.*;
 import org.example.user.web.service.UserService;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.UUID;
+import java.util.logging.Logger;
 
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, DisposableComponent {
 
-    @Resource(name = "")
+    private static final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
+    @Resource(name = "bean/UserRepository")
     private static UserRepository userRepository;
+
+    @PostConstruct
+    private void postConstruct() {
+        logger.info("post construct");
+    }
 
 
     private String createId() {
@@ -53,5 +62,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User queryUserByNameAndPassword(String name, String password) {
         return null;
+    }
+
+    @Override
+    public void init() {
+        logger.info("init by DisposableComponent#init");
     }
 }

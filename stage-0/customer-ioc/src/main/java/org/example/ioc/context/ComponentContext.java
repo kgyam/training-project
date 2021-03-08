@@ -1,16 +1,13 @@
-package org.example.user.web.context;
+package org.example.ioc.context;
 
-import org.example.user.web.destroy.DestroyedComponent;
-import org.example.user.web.init.DisposableComponent;
-import org.omg.CosNaming.NamingContext;
-import sun.rmi.runtime.Log;
+
+import org.example.ioc.destroy.DestroyedComponent;
+import org.example.ioc.init.DisposableComponent;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.naming.*;
-import javax.servlet.ServletContext;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -31,7 +28,8 @@ public class ComponentContext {
     private Context context;
     public static final String COMPONENT_CONTEXT = ComponentContext.class.getName();
     private static final String ENV_NAME = "java:comp/env";
-    private static ServletContext servletContext;
+    //    private static ServletContext servletContext;
+    private static ComponentContext componentContext;
 
     private ClassLoader classLoader;
 
@@ -39,13 +37,13 @@ public class ComponentContext {
 
     private boolean isFinish = false;
 
-    public ComponentContext(ServletContext servletContext) {
-        init(servletContext);
-    }
+//    public ComponentContext(ServletContext servletContext) {
+//        init(servletContext);
+//    }
 
-    private void init(ServletContext servletContext) {
+    private void init() {
 
-        initContext(servletContext);
+        initContext();
         instantiateComponent();
         initializeComponent();
         isFinish = true;
@@ -55,14 +53,15 @@ public class ComponentContext {
     /**
      * 初始化上下文
      */
-    private void initContext(ServletContext servletContext) {
+    private void initContext() {
         try {
             logger.info("initContext...");
             Context context = (Context) new InitialContext().lookup(ENV_NAME);
             this.context = context;
-            servletContext.setAttribute(COMPONENT_CONTEXT, this);
-            this.classLoader = servletContext.getClassLoader();
-            this.servletContext = servletContext;
+//            servletContext.setAttribute(COMPONENT_CONTEXT, this);
+            this.classLoader = this.getClass().getClassLoader();
+//            this.servletContext = servletContext;
+            this.componentContext = this;
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }
@@ -132,7 +131,7 @@ public class ComponentContext {
      * 初始化组件：赋值、注入、初始化方法回调
      */
     private void initializeComponent() {
-        componentContainer.forEach((componentName, component) -> {
+        componentContainer.forEach((componnetName, component) -> {
             injectComponent(component);
             invokeDisposable(component);
             initializeCallback(component);
@@ -196,10 +195,8 @@ public class ComponentContext {
      * @return
      */
     public static ComponentContext getInstance() {
-        if (servletContext == null) {
-            throw new RuntimeException("servletContext is null");
-        }
-        return (ComponentContext) servletContext.getAttribute(COMPONENT_CONTEXT);
+
+        return ComponentContext.componentContext;
     }
 
     /**
