@@ -1,9 +1,8 @@
 package org.example.user.web.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.example.user.web.domain.User;
+import org.example.user.web.domain.*;
 import org.example.user.web.service.UserService;
-import org.example.user.web.service.impl.UserServiceImpl;
 import org.example.web.mvc.controller.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,27 +18,27 @@ import java.util.logging.Logger;
 @RequestMapping(value = "/user")
 public class UserController implements PageController {
 
-    private static final Logger LOGGER = Logger.getLogger (UserController.class.getName ());
-    private static UserService userService = new UserServiceImpl ();
+    private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
+    private static UserService userService;
 
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")
     public String registry(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String name = request.getParameter ("name");
-        name = new String (name.getBytes ("iso8859-1"), "UTF-8");
-        String email = request.getParameter ("email");
-        String password = request.getParameter ("password");
-        String phoneNum = request.getParameter ("phoneNum");
+        String name = request.getParameter("name");
+        name = new String(name.getBytes("iso8859-1"), "UTF-8");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String phoneNum = request.getParameter("phoneNum");
 
-        if (StringUtils.isBlank (name) || StringUtils.isBlank (email)
-                || StringUtils.isBlank (phoneNum) || StringUtils.isBlank (password)) {
+        if (StringUtils.isBlank(name) || StringUtils.isBlank(email)
+                || StringUtils.isBlank(phoneNum) || StringUtils.isBlank(password)) {
             return "failed.jsp";
         }
-        User user = new User (name, password, email, phoneNum);
-        LOGGER.info (user.toString ());
-        if (userService.register (user)) {
-            response.setCharacterEncoding ("utf-8");
-            request.setAttribute ("user", user);
+        User user = new User(name, password, email, phoneNum);
+        LOGGER.info(user.toString());
+        if (userService.register(user)) {
+            response.setCharacterEncoding("utf-8");
+            request.setAttribute("user", user);
             return "success.jsp";
         }
         return "";

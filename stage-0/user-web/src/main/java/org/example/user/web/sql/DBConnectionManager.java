@@ -39,13 +39,13 @@ public class DBConnectionManager {
 
     public DBConnectionManager() {
 
-        DataSource ds = ComponentContext.getInstance (SCHEMA);
-        try {
-            this.connection = ds.getConnection ();
-        } catch (SQLException throwables) {
-            LOGGER.log (Level.SEVERE, throwables.getMessage (), throwables);
-            throw new RuntimeException (throwables);
-        }
+//        DataSource ds = ComponentContext.getInstance (SCHEMA);
+//        try {
+//            this.connection = ds.getConnection ();
+//        } catch (SQLException throwables) {
+//            LOGGER.log (Level.SEVERE, throwables.getMessage (), throwables);
+//            throw new RuntimeException (throwables);
+//        }
     }
 
 //    private static Connection loadByJndi() throws NamingException, SQLException {

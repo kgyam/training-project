@@ -1,7 +1,7 @@
 package org.example.user.web.repository;
 
 
-import org.example.user.web.domain.User;
+import org.example.user.web.domain.*;
 
 import java.util.Collection;
 

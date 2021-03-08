@@ -1,7 +1,7 @@
 package org.example.user.web.service;
 
+import org.example.user.web.domain.*;
 
-import org.example.user.web.domain.User;
 
 /**
  * 用户服务

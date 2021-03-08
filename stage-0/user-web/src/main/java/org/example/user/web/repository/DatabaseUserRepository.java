@@ -1,8 +1,8 @@
 package org.example.user.web.repository;
 
 import org.example.user.web.context.ComponentContext;
-import org.example.user.web.domain.User;
-import org.example.user.web.sql.DBConnectionManager;
+import org.example.user.web.domain.*;
+import org.example.user.web.sql.*;
 
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -13,16 +13,16 @@ import java.util.logging.Logger;
  * @since
  */
 public class DatabaseUserRepository implements UserRepository {
-    private static Logger LOGGER = Logger.getLogger (DatabaseUserRepository.class.getName ());
+    private static Logger LOGGER = Logger.getLogger(DatabaseUserRepository.class.getName());
     private static final String TABLE_NAME = "users";
-    private static DBConnectionManager dbConnectionManager = ComponentContext.getInstance (DBConnectionManager.CONNECTION_MANAGER);
+    private static DBConnectionManager dbConnectionManager;
 
     @Override
     public boolean save(User user) {
         try {
-            dbConnectionManager.save (user, TABLE_NAME);
+            dbConnectionManager.save(user, TABLE_NAME);
         } catch (Exception e) {
-            throw new RuntimeException (e.getCause ());
+            throw new RuntimeException(e.getCause());
         }
         return true;
     }
