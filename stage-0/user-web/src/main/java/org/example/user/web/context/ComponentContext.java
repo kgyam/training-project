@@ -2,15 +2,12 @@ package org.example.user.web.context;
 
 import org.example.user.web.destroy.DestroyedComponent;
 import org.example.user.web.init.DisposableComponent;
-import org.omg.CosNaming.NamingContext;
-import sun.rmi.runtime.Log;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.naming.*;
 import javax.servlet.ServletContext;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -26,28 +23,28 @@ import java.util.logging.Logger;
  */
 public class ComponentContext {
 
-    private static final Logger logger = Logger.getLogger(ComponentContext.class.getName());
+    private static final Logger logger = Logger.getLogger (ComponentContext.class.getName ());
 
     private Context context;
-    public static final String COMPONENT_CONTEXT = ComponentContext.class.getName();
+    public static final String COMPONENT_CONTEXT = ComponentContext.class.getName ();
     private static final String ENV_NAME = "java:comp/env";
     private static ServletContext servletContext;
 
     private ClassLoader classLoader;
 
-    private Map<String, Object> componentContainer = new ConcurrentHashMap<>(128);
+    private Map<String, Object> componentContainer = new ConcurrentHashMap<> (128);
 
     private boolean isFinish = false;
 
     public ComponentContext(ServletContext servletContext) {
-        init(servletContext);
+        init (servletContext);
     }
 
     private void init(ServletContext servletContext) {
 
-        initContext(servletContext);
-        instantiateComponent();
-        initializeComponent();
+        initContext (servletContext);
+        instantiateComponent ();
+        initializeComponent ();
         isFinish = true;
     }
 
@@ -57,14 +54,14 @@ public class ComponentContext {
      */
     private void initContext(ServletContext servletContext) {
         try {
-            logger.info("initContext...");
-            Context context = (Context) new InitialContext().lookup(ENV_NAME);
+            logger.info ("initContext...");
+            Context context = (Context) new InitialContext ().lookup (ENV_NAME);
             this.context = context;
-            servletContext.setAttribute(COMPONENT_CONTEXT, this);
-            this.classLoader = servletContext.getClassLoader();
+            servletContext.setAttribute (COMPONENT_CONTEXT, this);
+            this.classLoader = servletContext.getClassLoader ();
             this.servletContext = servletContext;
         } catch (NamingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException (e);
         }
     }
 
@@ -73,15 +70,15 @@ public class ComponentContext {
      */
     private void instantiateComponent() {
         if (context == null) {
-            throw new RuntimeException("javax.naming.Context is null");
+            throw new RuntimeException ("javax.naming.Context is null");
         }
-        List<String> componentNameList = listAllComponentName();
-        componentNameList.forEach(componentName -> {
+        List<String> componentNameList = listAllComponentName ();
+        componentNameList.forEach (componentName -> {
             try {
-                Object component = context.lookup(componentName);
-                componentContainer.put(componentName, component);
+                Object component = context.lookup (componentName);
+                componentContainer.put (componentName, component);
             } catch (NamingException e) {
-                e.printStackTrace();
+                e.printStackTrace ();
             }
         });
     }
@@ -89,42 +86,42 @@ public class ComponentContext {
 
     private <C> C lookupComponent(String name) {
         try {
-            return (C) context.lookup(name);
+            return (C) context.lookup (name);
         } catch (NamingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException (e);
         }
 
     }
 
 
     private List<String> listAllComponentName() {
-        return listComponentName("/");
+        return listComponentName ("/");
     }
 
     private List<String> listComponentName(String conetxtName) {
         try {
-            NamingEnumeration<NameClassPair> nameClassPairNamingEnumeration = context.list(conetxtName);
+            NamingEnumeration<NameClassPair> nameClassPairNamingEnumeration = context.list (conetxtName);
             if (nameClassPairNamingEnumeration == null) {
                 return Collections.EMPTY_LIST;
             }
 
-            List<String> componentNameList = new LinkedList<>();
-            while (nameClassPairNamingEnumeration.hasMoreElements()) {
-                NameClassPair nameClassPair = nameClassPairNamingEnumeration.next();
-                Class clazz = classLoader.loadClass(nameClassPair.getClassName());
+            List<String> componentNameList = new LinkedList<> ();
+            while (nameClassPairNamingEnumeration.hasMoreElements ()) {
+                NameClassPair nameClassPair = nameClassPairNamingEnumeration.next ();
+                Class clazz = classLoader.loadClass (nameClassPair.getClassName ());
                 /*
                 如果遍历的类型也是一个javax.naming.Context,那么递归遍历这个Context下的元素
                  */
-                if (Context.class.isAssignableFrom(clazz)) {
-                    componentNameList.addAll(listComponentName(nameClassPair.getName()));
+                if (Context.class.isAssignableFrom (clazz)) {
+                    componentNameList.addAll (listComponentName (nameClassPair.getName ()));
                 } else {
-                    String name = conetxtName.startsWith("/") ? nameClassPair.getName() : conetxtName + "/" + nameClassPair.getName();
-                    componentNameList.add(name);
+                    String name = conetxtName.startsWith ("/") ? nameClassPair.getName () : conetxtName + "/" + nameClassPair.getName ();
+                    componentNameList.add (name);
                 }
             }
             return componentNameList;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException (e);
         }
     }
 
@@ -132,16 +129,16 @@ public class ComponentContext {
      * 初始化组件：赋值、注入、初始化方法回调
      */
     private void initializeComponent() {
-        componentContainer.forEach((componentName, component) -> {
-            injectComponent(component);
-            invokeDisposable(component);
-            initializeCallback(component);
+        componentContainer.forEach ((componentName, component) -> {
+            injectComponent (component);
+            invokeDisposable (component);
+            initializeCallback (component);
         });
     }
 
     private void invokeDisposable(Object component) {
         if (component instanceof DisposableComponent) {
-            ((DisposableComponent) component).init();
+            ((DisposableComponent) component).init ();
         }
     }
 
@@ -151,14 +148,14 @@ public class ComponentContext {
      * @param component
      */
     private void initializeCallback(Object component) {
-        Method[] methods = component.getClass().getDeclaredMethods();
-        Arrays.stream(methods).forEach(m -> {
-            if (m.isAnnotationPresent(PostConstruct.class)) {
+        Method[] methods = component.getClass ().getDeclaredMethods ();
+        Arrays.stream (methods).forEach (m -> {
+            if (m.isAnnotationPresent (PostConstruct.class)) {
                 try {
-                    m.setAccessible(true);
-                    m.invoke(component);
+                    m.setAccessible (true);
+                    m.invoke (component);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException (e);
                 }
             }
         });
@@ -171,18 +168,18 @@ public class ComponentContext {
      * @param component
      */
     private void injectComponent(Object component) {
-        Field[] fields = component.getClass().getDeclaredFields();
+        Field[] fields = component.getClass ().getDeclaredFields ();
         for (Field field : fields) {
-            if (field.isAnnotationPresent(Resource.class)) {
-                field.setAccessible(true);
-                Resource resource = field.getAnnotation(Resource.class);
-                String resourceName = resource.name();
-                Object o = lookupComponent(resourceName);
+            if (field.isAnnotationPresent (Resource.class)) {
+                field.setAccessible (true);
+                Resource resource = field.getAnnotation (Resource.class);
+                String resourceName = resource.name ();
+                Object o = lookupComponent (resourceName);
                 if (o != null) {
                     try {
-                        field.set(component, o);
+                        field.set (component, o);
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeException (e);
                     }
                 }
             }
@@ -197,9 +194,9 @@ public class ComponentContext {
      */
     public static ComponentContext getInstance() {
         if (servletContext == null) {
-            throw new RuntimeException("servletContext is null");
+            throw new RuntimeException ("servletContext is null");
         }
-        return (ComponentContext) servletContext.getAttribute(COMPONENT_CONTEXT);
+        return (ComponentContext) servletContext.getAttribute (COMPONENT_CONTEXT);
     }
 
     /**
@@ -210,30 +207,27 @@ public class ComponentContext {
      * @return
      */
     public <C> C getComponent(String name) {
-        if (!isFinish) {
-            throw new RuntimeException("ComponentContext init not finish");
-        }
-        return lookupComponent(name);
+        return lookupComponent (name);
     }
 
     public void destroy() throws RuntimeException {
-        doDestroy();
+        doDestroy ();
     }
 
 
     private void doDestroy() {
-        componentContainer.forEach((componentName, component) -> {
+        componentContainer.forEach ((componentName, component) -> {
             if (component instanceof DestroyedComponent) {
-                ((DestroyedComponent) component).destroy();
+                ((DestroyedComponent) component).destroy ();
             }
 
 
-            Arrays.stream(component.getClass().getDeclaredMethods()).forEach(m -> {
-                if (m.isAnnotationPresent(PreDestroy.class)) {
+            Arrays.stream (component.getClass ().getDeclaredMethods ()).forEach (m -> {
+                if (m.isAnnotationPresent (PreDestroy.class)) {
                     try {
-                        m.invoke(component);
+                        m.invoke (component);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeException (e);
                     }
                 }
             });

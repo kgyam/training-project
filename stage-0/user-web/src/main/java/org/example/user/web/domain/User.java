@@ -1,9 +1,7 @@
 package org.example.user.web.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -17,23 +15,20 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @NotNull
     private Long id;
 
     @Column
-    @NotNull
+
     private String name;
 
     @Column
-    @NotNull
+
     private String password;
 
     @Column
-    @Email
     private String email;
 
     @Column
-    @Max(value = 11)
     private String phoneNumber;
 
 
@@ -92,16 +87,16 @@ public class User {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass () != o.getClass ()) {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber);
+        return Objects.equals (id, user.id) && Objects.equals (name, user.name) && Objects.equals (password, user.password) && Objects.equals (email, user.email) && Objects.equals (phoneNumber, user.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, password, email, phoneNumber);
+        return Objects.hash (id, name, password, email, phoneNumber);
     }
 
     @Override
