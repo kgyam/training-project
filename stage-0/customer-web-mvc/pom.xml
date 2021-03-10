@@ -17,6 +17,8 @@
 
 
     <dependencies>
+
+
         <!-- Servlet API -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -33,6 +35,12 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kgyam</groupId>
+            <artifactId>customer-ioc</artifactId>
+            <version>v1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
