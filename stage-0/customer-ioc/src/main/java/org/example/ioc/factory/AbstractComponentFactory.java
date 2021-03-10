@@ -10,10 +10,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,17 +20,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractComponentFactory implements ComponentFactory {
 
-    public Map<String, Object> componentContainer = new ConcurrentHashMap<> (128);
+    public Map<String, Object> componentContainer = new ConcurrentHashMap<>(128);
 
 
     public AbstractComponentFactory() {
-        init ();
+        init();
     }
 
     final void init() {
-        initEnv ();
-        instantiateComponent ();
-        initializeComponent ();
+        componentContainer.clear();
+        initEnv();
+        instantiateComponent();
+        initializeComponent();
     }
 
     abstract void initEnv();
@@ -43,11 +41,13 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
     @Override
     public <T> List<T> getComponents(Class<T> componentType) {
-        List<T> result = new ArrayList<> ();
-        componentContainer.forEach ((componentName, component) -> {
-
-            if (component.getClass ().isAssignableFrom (componentType)) {
-                result.add ((T) component);
+        if (componentType == null) {
+            return Collections.emptyList();
+        }
+        List<T> result = new ArrayList<>();
+        componentContainer.forEach((componentName, component) -> {
+            if (componentType.isAssignableFrom(component.getClass())) {
+                result.add((T) component);
             }
         });
         return result;
@@ -55,12 +55,12 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
     @Override
     public <C> C getComponent(String findComponentName, Class<C> componentType) {
-        if (StringUtils.isBlank (findComponentName) || componentType == null) {
+        if (StringUtils.isBlank(findComponentName) || componentType == null) {
             return null;
         }
-        if (componentContainer.containsKey (findComponentName)) {
-            Object component = componentContainer.get (findComponentName);
-            if (component.getClass ().isAssignableFrom (componentType)) {
+        if (componentContainer.containsKey(findComponentName)) {
+            Object component = componentContainer.get(findComponentName);
+            if (component.getClass().isAssignableFrom(componentType)) {
                 return (C) component;
             }
         }
@@ -69,12 +69,12 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
     @Override
     public <C> C getComponent(String findComponentName) {
-        return lookupComponent (findComponentName);
+        return lookupComponent(findComponentName);
     }
 
 
     public void destroy() throws RuntimeException {
-        doDestroy ();
+        doDestroy();
     }
 
 
@@ -82,24 +82,34 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
      * 初始化组件：赋值、注入、初始化方法回调
      */
     private void initializeComponent() {
-        componentContainer.forEach ((componentName, component) -> {
-            invokeAware (component);
-            component = injectComponent (component);
-            component = invokeDisposable (component);
-            component = initializeCallback (component);
-            componentContainer.put (componentName, component);
+        componentContainer.forEach((componentName, component) -> {
+            invokeAware(component);
+            component = injectComponent(component);
+            component = invokeDisposable(component);
+            component = initializeCallback(component);
+            componentContainer.put(componentName, component);
         });
     }
 
+    /**
+     * @param component
+     * @param <C>
+     */
     private <C> void invokeAware(C component) {
         if (component instanceof ComponentFactoryAware) {
-            ((ComponentFactoryAware) component).setComponentFactory (this);
+            ((ComponentFactoryAware) component).setComponentFactory(this);
         }
     }
 
+    /**
+     * 初始化方法回调
+     *
+     * @param component
+     * @return
+     */
     private Object invokeDisposable(Object component) {
         if (component instanceof DisposableComponent) {
-            ((DisposableComponent) component).init ();
+            ((DisposableComponent) component).init();
         }
         return component;
     }
@@ -110,14 +120,14 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
      * @param component
      */
     private Object initializeCallback(Object component) {
-        Method[] methods = component.getClass ().getDeclaredMethods ();
-        Arrays.stream (methods).forEach (m -> {
-            if (m.isAnnotationPresent (PostConstruct.class)) {
+        Method[] methods = component.getClass().getDeclaredMethods();
+        Arrays.stream(methods).forEach(m -> {
+            if (m.isAnnotationPresent(PostConstruct.class)) {
                 try {
-                    m.setAccessible (true);
-                    m.invoke (component);
+                    m.setAccessible(true);
+                    m.invoke(component);
                 } catch (Exception e) {
-                    throw new RuntimeException (e);
+                    throw new RuntimeException(e);
                 }
             }
         });
@@ -125,10 +135,10 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     }
 
     private <C> C lookupComponent(String findComponentName) {
-        if (StringUtils.isBlank (findComponentName)) {
+        if (StringUtils.isBlank(findComponentName)) {
             return null;
         }
-        return (C) componentContainer.get (findComponentName);
+        return (C) componentContainer.get(findComponentName);
     }
 
     /**
@@ -137,18 +147,18 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
      * @param component
      */
     private Object injectComponent(Object component) {
-        Field[] fields = component.getClass ().getDeclaredFields ();
+        Field[] fields = component.getClass().getDeclaredFields();
         for (Field field : fields) {
-            if (field.isAnnotationPresent (Resource.class)) {
-                field.setAccessible (true);
-                Resource resource = field.getAnnotation (Resource.class);
-                String resourceName = resource.name ();
-                Object o = lookupComponent (resourceName);
+            if (field.isAnnotationPresent(Resource.class)) {
+                field.setAccessible(true);
+                Resource resource = field.getAnnotation(Resource.class);
+                String resourceName = resource.name();
+                Object o = lookupComponent(resourceName);
                 if (o != null) {
                     try {
-                        field.set (component, o);
+                        field.set(component, o);
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException (e);
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -158,18 +168,18 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
 
     private void doDestroy() {
-        componentContainer.forEach ((componentName, component) -> {
+        componentContainer.forEach((componentName, component) -> {
             if (component instanceof DestroyedComponent) {
-                ((DestroyedComponent) component).destroy ();
+                ((DestroyedComponent) component).destroy();
             }
 
 
-            Arrays.stream (component.getClass ().getDeclaredMethods ()).forEach (m -> {
-                if (m.isAnnotationPresent (PreDestroy.class)) {
+            Arrays.stream(component.getClass().getDeclaredMethods()).forEach(m -> {
+                if (m.isAnnotationPresent(PreDestroy.class)) {
                     try {
-                        m.invoke (component);
+                        m.invoke(component);
                     } catch (Exception e) {
-                        throw new RuntimeException (e);
+                        throw new RuntimeException(e);
                     }
                 }
             });

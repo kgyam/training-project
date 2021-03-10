@@ -8,7 +8,7 @@ import java.util.List;
  * @since
  */
 public interface ComponentFactory {
-    public static final String COMPONENT_CONTEXT = JndiComponentFactory.class.getName ();
+    public static final String COMPONENT_FACTORY = JndiComponentFactory.class.getName ();
 
 
     <C> List<C> getComponents(Class<C> componentType);

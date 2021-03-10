@@ -1,10 +1,10 @@
 package org.example.web.mvc.init;
 
-import com.sun.jndi.toolkit.ctx.ComponentContext;
 import org.example.ioc.factory.ComponentFactory;
 import org.example.web.mvc.controller.Controller;
 import org.example.web.mvc.servlet.DispatcherServlet;
 
+import javax.servlet.ServletConfig;
 import java.util.List;
 
 /**
@@ -14,18 +14,18 @@ import java.util.List;
  */
 public class CommonInitializationHandler extends AbstractInitializationHandler {
 
-    private DispatcherServlet dispatcherServlet;
 
-    public CommonInitializationHandler(DispatcherServlet dispatcherServlet) {
+    public CommonInitializationHandler(ServletConfig config, DispatcherServlet dispatcherServlet) {
+        this.config = config;
         this.dispatcherServlet = dispatcherServlet;
     }
 
     @Override
     public void init() {
-        ComponentFactory factory = (ComponentFactory) dispatcherServlet.getServletConfig ().getServletContext ().getAttribute (ComponentFactory.COMPONENT_CONTEXT);
+        ComponentFactory factory = (ComponentFactory) config.getServletContext().getAttribute(ComponentFactory.COMPONENT_FACTORY);
         if (factory != null) {
-            List<Controller> result = factory.getComponents (Controller.class);
-            initController (result.iterator ());
+            List<Controller> result = factory.getComponents(Controller.class);
+            initController(result.iterator());
         }
     }
 }

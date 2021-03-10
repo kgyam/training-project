@@ -1,7 +1,7 @@
 package org.example.user.web.service.impl;
 
+import org.example.ioc.init.DisposableComponent;
 import org.example.user.web.domain.*;
-import org.example.user.web.init.DisposableComponent;
 import org.example.user.web.repository.*;
 import org.example.user.web.service.UserService;
 

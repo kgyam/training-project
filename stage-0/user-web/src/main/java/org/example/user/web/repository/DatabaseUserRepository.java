@@ -4,6 +4,7 @@ import org.example.user.web.domain.User;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -19,7 +20,7 @@ public class DatabaseUserRepository implements UserRepository {
     private EntityManager entityManager;
 
     @Override
-    public boolean save(User user) {
+    public boolean save(@Valid User user) {
         try {
             logger.info("save user:" + user);
             entityManager.persist(user);

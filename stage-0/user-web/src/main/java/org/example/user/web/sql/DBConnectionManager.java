@@ -1,6 +1,5 @@
 package org.example.user.web.sql;
 
-import org.example.user.web.context.ComponentContext;
 
 import javax.sql.DataSource;
 import java.beans.BeanInfo;

@@ -18,8 +18,14 @@
     <dependencies>
         <dependency>
             <groupId>org.kgyam</groupId>
+            <artifactId>customer-ioc</artifactId>
+            <version>v1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kgyam</groupId>
             <artifactId>customer-web-mvc</artifactId>
-            <version>${revision}</version>
+            <version>v1-SNAPSHOT</version>
         </dependency>
 
         <!-- Servlet API -->
@@ -62,6 +68,7 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/javax.el/javax.el-api -->
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
@@ -73,7 +80,6 @@
             <artifactId>javax.el</artifactId>
             <version>3.0.1-b11</version>
         </dependency>
-
     </dependencies>
 
     <build>
