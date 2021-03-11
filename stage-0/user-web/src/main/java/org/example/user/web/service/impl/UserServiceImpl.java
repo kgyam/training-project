@@ -7,23 +7,30 @@ import org.example.user.web.service.UserService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class UserServiceImpl implements UserService, DisposableComponent {
 
-    private static final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
+    private static final Logger logger = Logger.getLogger (UserServiceImpl.class.getName ());
     @Resource(name = "bean/UserRepository")
-    private static UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Resource(name = "bean/UserValidator")
+    private Validator validator;
+
 
     @PostConstruct
     private void postConstruct() {
-        logger.info("post construct");
+        logger.info ("post construct");
     }
 
 
     private String createId() {
-        return UUID.randomUUID().toString().replace("-", "");
+        return UUID.randomUUID ().toString ().replace ("-", "");
     }
 
 
@@ -40,8 +47,22 @@ public class UserServiceImpl implements UserService, DisposableComponent {
 
     @Override
     public boolean register(User user) {
-        user.setPassword(encrypt(user.getPassword()));
-        return userRepository.save(user);
+        try {
+
+            Set<ConstraintViolation<User>> validResult = validator.validate (user);
+            if (validResult.size () > 0) {
+                for (ConstraintViolation<User> userConstraintViolation : validResult) {
+                    logger.info ("错误:" + userConstraintViolation.getMessage ());
+                    logger.info ("字段:" + userConstraintViolation.getPropertyPath ().toString ());
+                }
+                return false;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException (e);
+        }
+        user.setPassword (encrypt (user.getPassword ()));
+        return userRepository.save (user);
     }
 
     @Override
@@ -66,6 +87,6 @@ public class UserServiceImpl implements UserService, DisposableComponent {
 
     @Override
     public void init() {
-        logger.info("init by DisposableComponent#init");
+        logger.info ("init by DisposableComponent#init");
     }
 }

@@ -20,7 +20,7 @@ import java.util.Objects;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Min(value = 1, message = "id为大于0整数")
     private Long id;
 
@@ -48,6 +48,11 @@ public class User implements Serializable {
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.id = createId ();
+    }
+
+    private Long createId() {
+        return (long) ((Math.random () * 9 + 1) * 10000000);
     }
 
     public Long getId() {
@@ -95,16 +100,16 @@ public class User implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass () != o.getClass ()) {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber);
+        return Objects.equals (id, user.id) && Objects.equals (name, user.name) && Objects.equals (password, user.password) && Objects.equals (email, user.email) && Objects.equals (phoneNumber, user.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, password, email, phoneNumber);
+        return Objects.hash (id, name, password, email, phoneNumber);
     }
 
     @Override

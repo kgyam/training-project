@@ -43,7 +43,7 @@ public class UserController implements PageController {
             request.setAttribute("user", user);
             return "success.jsp";
         }
-        return "";
+        return "failed.jsp";
     }
 
 
