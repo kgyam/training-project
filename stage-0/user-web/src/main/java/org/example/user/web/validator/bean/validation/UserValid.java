@@ -1,4 +1,4 @@
-package org.example.user.validator.bean.validation;
+package org.example.user.web.validator.bean.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

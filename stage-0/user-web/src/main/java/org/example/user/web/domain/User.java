@@ -1,6 +1,5 @@
 package org.example.user.web.domain;
 
-import org.example.user.validator.bean.validation.UserValid;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Range;
 

@@ -17,7 +17,7 @@
 
 
     <Resource name="bean/UserValidator" auth="Container"
-              type="org.example.user.validator.bean.validation.DelegatingValidator"
+              type="org.example.user.web.validator.bean.validation.DelegatingValidator"
               factory="org.apache.naming.factory.BeanFactory"/>
 
     <Resource name="bean/UserService" auth="Container"

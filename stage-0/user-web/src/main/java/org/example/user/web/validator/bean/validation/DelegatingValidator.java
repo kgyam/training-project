@@ -1,8 +1,7 @@
-package org.example.user.validator.bean.validation;
+package org.example.user.web.validator.bean.validation;
 
 import org.example.ioc.init.DisposableComponent;
 
-import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
