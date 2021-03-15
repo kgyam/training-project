@@ -1,6 +1,8 @@
 package org.example.user.web.controller;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.example.user.web.domain.*;
 import org.example.user.web.service.UserService;
 import org.example.web.mvc.controller.*;
@@ -19,9 +21,12 @@ import java.util.logging.Logger;
 @RequestMapping(value = "/user")
 public class UserController implements PageController {
 
-    private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
+    private static final Logger logger = Logger.getLogger(UserController.class.getName());
     @Resource(name = "bean/UserService")
     private UserService userService;
+
+    @Resource(name = "bean/ConfigProviderResolver")
+    private ConfigProviderResolver configProviderResolver;
 
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")
@@ -37,7 +42,7 @@ public class UserController implements PageController {
             return "failed.jsp";
         }
         User user = new User(name, password, email, phoneNum);
-        LOGGER.info(user.toString());
+        logger.info(user.toString());
         if (userService.register(user)) {
             response.setCharacterEncoding("utf-8");
             request.setAttribute("user", user);
@@ -51,5 +56,18 @@ public class UserController implements PageController {
     @RequestMapping(value = "/registry-form")
     public String registryForm(HttpServletRequest request, HttpServletResponse response) {
         return "registry-form.jsp";
+    }
+
+    @RequestMethod({HttpMethod.GET})
+    @RequestMapping(value = "/application")
+    public void getApplicationName(HttpServletRequest request, HttpServletResponse response) {
+        if (configProviderResolver == null) {
+            logger.warning("configProviderResolver instantiation fail");
+        }
+
+
+        Config config = configProviderResolver.getConfig();
+        config.getPropertyNames().forEach(logger::info);
+
     }
 }
