@@ -36,6 +36,20 @@
         <url-pattern>*.js</url-pattern>
     </servlet-mapping>
 
+
+
+    <servlet>
+        <servlet-name>jolokia-agent</servlet-name>
+        <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jolokia-agent</servlet-name>
+        <url-pattern>/jolokia/*</url-pattern>
+    </servlet-mapping>
+
+
     <servlet>
         <servlet-name>DispatcherServlet</servlet-name>
         <servlet-class>org.example.web.mvc.servlet.DispatcherServlet</servlet-class>
@@ -47,6 +61,12 @@
         <servlet-name>DispatcherServlet</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+
+
+
+
+
 
     <!--    <filter>-->
     <!--        <filter-name>CharsetEncodingFilter</filter-name>-->

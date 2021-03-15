@@ -8,7 +8,9 @@ import org.example.web.mvc.controller.PageController;
 import org.example.web.mvc.controller.RequestMethodInfo;
 import org.example.web.mvc.init.CommonInitializationHandler;
 import org.example.web.mvc.init.InitializationHandler;
+import org.example.web.mvc.jmx.DispatcherServletManager;
 
+import javax.management.*;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,31 +27,39 @@ import java.util.logging.Logger;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private final Map<String, Object> controllerMap = new ConcurrentHashMap<>();
-    private final Map<String, RequestMethodInfo> methodMap = new ConcurrentHashMap<>();
+    private final Map<String, Object> controllerMap = new ConcurrentHashMap<> ();
+    private final Map<String, RequestMethodInfo> methodMap = new ConcurrentHashMap<> ();
     private ServletConfig servletConfig;
-    private static final Logger LOGGER = Logger.getLogger(DispatcherServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger (DispatcherServlet.class.getName ());
 
 
     @Override
     public void init(ServletConfig config) {
         this.servletConfig = config;
-        initComponentFactory();
-        initHandleMethods();
+        initComponentFactory ();
+        initHandleMethods ();
+        try {
+            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer ();
+            ObjectName name = new ObjectName ("org.example.web.mvc.jmx:type=DispatchServletManager");
+            DispatcherServletManager mBean = new DispatcherServletManager (this);
+            mbs.registerMBean (mBean, name);
+        } catch (Exception e) {
+            throw new RuntimeException (e);
+        }
     }
 
     private void initComponentFactory() {
-        ComponentFactory factory = new JndiComponentFactory();
-        servletConfig.getServletContext().setAttribute(ComponentFactory.COMPONENT_FACTORY, factory);
+        ComponentFactory factory = new JndiComponentFactory ();
+        servletConfig.getServletContext ().setAttribute (ComponentFactory.COMPONENT_FACTORY, factory);
     }
 
     private void initHandleMethods() {
         //清空缓存
-        controllerMap.clear();
-        methodMap.clear();
+        controllerMap.clear ();
+        methodMap.clear ();
         //初始化controller方法
-        InitializationHandler initializationHandler = new CommonInitializationHandler(this.servletConfig, this);
-        initializationHandler.init();
+        InitializationHandler initializationHandler = new CommonInitializationHandler (this.servletConfig, this);
+        initializationHandler.init ();
     }
 
 
@@ -57,44 +68,44 @@ public class DispatcherServlet extends HttpServlet {
         //  请求相关处理
 
         // requestURI = /a/hello/world
-        String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI ();
         // contextPath  = /a or "/" or ""
-        String servletContextPath = request.getContextPath();
+        String servletContextPath = request.getContextPath ();
         String prefixPath = servletContextPath;
 
-        LOGGER.info("requestURI : " + requestURI);
-        LOGGER.info("servletContextPath : " + servletContextPath);
-        LOGGER.info("prefixPath : " + prefixPath);
+        LOGGER.info ("requestURI : " + requestURI);
+        LOGGER.info ("servletContextPath : " + servletContextPath);
+        LOGGER.info ("prefixPath : " + prefixPath);
 
-        RequestMethodInfo requestMethodInfo = methodMap.get(requestURI);
-        if (ObjectUtils.notEqual(requestMethodInfo, null)) {
-            Controller controller = requestMethodInfo.getController();
-            Method requestMethod = requestMethodInfo.getRequestMethod();
-            String httpMethod = request.getMethod();
-            if (!requestMethodInfo.isSupportHttpMethod(httpMethod)) {
+        RequestMethodInfo requestMethodInfo = methodMap.get (requestURI);
+        if (ObjectUtils.notEqual (requestMethodInfo, null)) {
+            Controller controller = requestMethodInfo.getController ();
+            Method requestMethod = requestMethodInfo.getRequestMethod ();
+            String httpMethod = request.getMethod ();
+            if (!requestMethodInfo.isSupportHttpMethod (httpMethod)) {
                 //HTTP 方法不支持
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                response.setStatus (HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 return;
             }
             try {
-                Object result = requestMethod.invoke(controller, request, response);
+                Object result = requestMethod.invoke (controller, request, response);
                 if (controller instanceof PageController) {
-                    if (!requestMethod.getReturnType().isAssignableFrom(String.class)) {
-                        throw new RuntimeException("can not forward the page");
+                    if (!requestMethod.getReturnType ().isAssignableFrom (String.class)) {
+                        throw new RuntimeException ("can not forward the page");
                     }
-                    String viewPath = String.valueOf(result);
-                    ServletContext servletContext = request.getServletContext();
-                    if (!viewPath.startsWith("/")) {
+                    String viewPath = String.valueOf (result);
+                    ServletContext servletContext = request.getServletContext ();
+                    if (!viewPath.startsWith ("/")) {
                         viewPath = "/" + viewPath;
                     }
-                    RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(viewPath);
-                    requestDispatcher.forward(request, response);
+                    RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher (viewPath);
+                    requestDispatcher.forward (request, response);
                 } else {
                     // TODO: 2021/3/2
-                    LOGGER.info("not finish part");
+                    LOGGER.info ("not finish part");
                 }
             } catch (Exception e) {
-                LOGGER.severe(e.getMessage());
+                LOGGER.severe (e.getMessage ());
             }
         }
     }
@@ -106,5 +117,11 @@ public class DispatcherServlet extends HttpServlet {
 
     public Map<String, Object> getControllerMap() {
         return controllerMap;
+    }
+
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return servletConfig;
     }
 }
