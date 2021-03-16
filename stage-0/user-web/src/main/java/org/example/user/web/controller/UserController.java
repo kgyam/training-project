@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @RequestMapping(value = "/user")
 public class UserController implements PageController {
 
-    private static final Logger logger = Logger.getLogger(UserController.class.getName());
+    private static final Logger logger = Logger.getLogger (UserController.class.getName ());
     @Resource(name = "bean/UserService")
     private UserService userService;
 
@@ -31,21 +31,21 @@ public class UserController implements PageController {
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")
     public String registry(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String name = request.getParameter("name");
-        name = new String(name.getBytes("iso8859-1"), "UTF-8");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String phoneNum = request.getParameter("phoneNum");
+        String name = request.getParameter ("name");
+        name = new String (name.getBytes ("iso8859-1"), "UTF-8");
+        String email = request.getParameter ("email");
+        String password = request.getParameter ("password");
+        String phoneNum = request.getParameter ("phoneNum");
 
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(email)
-                || StringUtils.isBlank(phoneNum) || StringUtils.isBlank(password)) {
+        if (StringUtils.isBlank (name) || StringUtils.isBlank (email)
+                || StringUtils.isBlank (phoneNum) || StringUtils.isBlank (password)) {
             return "failed.jsp";
         }
-        User user = new User(name, password, email, phoneNum);
-        logger.info(user.toString());
-        if (userService.register(user)) {
-            response.setCharacterEncoding("utf-8");
-            request.setAttribute("user", user);
+        User user = new User (name, password, email, phoneNum);
+        logger.info (user.toString ());
+        if (userService.register (user)) {
+            response.setCharacterEncoding ("utf-8");
+            request.setAttribute ("user", user);
             return "success.jsp";
         }
         return "failed.jsp";
@@ -60,14 +60,15 @@ public class UserController implements PageController {
 
     @RequestMethod({HttpMethod.GET})
     @RequestMapping(value = "/application")
-    public void getApplicationName(HttpServletRequest request, HttpServletResponse response) {
+    public String getApplicationName(HttpServletRequest request, HttpServletResponse response) {
         if (configProviderResolver == null) {
-            logger.warning("configProviderResolver instantiation fail");
+            logger.warning ("configProviderResolver instantiation fail");
         }
 
-
-        Config config = configProviderResolver.getConfig();
-        config.getPropertyNames().forEach(logger::info);
-
+        Config config = configProviderResolver.getConfig ();
+        String applicationName = config.getValue ("application.name", String.class);
+        logger.info ("applicationName: " + applicationName);
+        request.setAttribute ("applicationName", applicationName);
+        return "application-name.jsp";
     }
 }

@@ -23,6 +23,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DispatcherServlet extends HttpServlet {
@@ -105,7 +106,7 @@ public class DispatcherServlet extends HttpServlet {
                     LOGGER.info ("not finish part");
                 }
             } catch (Exception e) {
-                LOGGER.severe (e.getMessage ());
+                LOGGER.log (Level.SEVERE, e.getMessage (), e);
             }
         }
     }

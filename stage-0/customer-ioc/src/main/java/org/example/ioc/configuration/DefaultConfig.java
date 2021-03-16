@@ -20,7 +20,10 @@ public class DefaultConfig implements Config {
 
     private List<ConfigSource> configSourceList = new LinkedList<> ();
 
-    private static Comparator<ConfigSource> configSourceComparator = Comparator.comparingInt (ConfigSource::getOrdinal);
+    //    private static Comparator<ConfigSource> configSourceComparator = Comparator.comparingInt (ConfigSource::getOrdinal);
+    private static Comparator<ConfigSource> configSourceComparator = ((o1, o2) ->
+            Integer.compare (o2.getOrdinal (), o1.getOrdinal ())
+    );
 
     public DefaultConfig() {
         /*
@@ -59,7 +62,6 @@ public class DefaultConfig implements Config {
     }
 
 
-
     @Override
     public Iterable<ConfigSource> getConfigSources() {
         return Collections.unmodifiableList (this.configSourceList);
@@ -81,6 +83,7 @@ public class DefaultConfig implements Config {
     protected String getPropertyValue(String propertyName) {
         String propertyValue = null;
         for (ConfigSource configSource : configSourceList) {
+
             if ((propertyValue = configSource.getValue (propertyName)) != null) {
                 break;
             }

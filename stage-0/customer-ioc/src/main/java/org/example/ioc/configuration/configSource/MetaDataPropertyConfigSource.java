@@ -18,7 +18,7 @@ public class MetaDataPropertyConfigSource implements ConfigSource {
     private final int ordinal = 3;
     //    private final Map<String, String> properties;
     private final String configSourceName = "MetaDataPropertyConfigSource";
-    private static final String DEFAULT_PATH = "classpath:/META-DATA/customer-application.properties";
+    private static final String DEFAULT_PATH = "classpath*:/META-INF/customer-application.properties";
     private final Properties properties = new Properties ();
     private final Set<String> propertyNames = new LinkedHashSet<> ();
 
@@ -28,9 +28,11 @@ public class MetaDataPropertyConfigSource implements ConfigSource {
 
     private void init() {
         try {
-            InputStream inputStream = getClass ().getResourceAsStream (DEFAULT_PATH);
+            InputStream inputStream = this.getClass ().getResourceAsStream (DEFAULT_PATH);
+            if (inputStream == null) {
+                return;
+            }
             properties.load (inputStream);
-
             for (Object key : properties.keySet ()) {
                 propertyNames.add (String.valueOf (key));
             }
@@ -46,7 +48,7 @@ public class MetaDataPropertyConfigSource implements ConfigSource {
 
     @Override
     public int getOrdinal() {
-        return 2;
+        return ordinal;
     }
 
     @Override
