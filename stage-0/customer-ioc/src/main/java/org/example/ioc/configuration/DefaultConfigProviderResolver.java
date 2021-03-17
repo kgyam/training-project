@@ -17,6 +17,7 @@ public class DefaultConfigProviderResolver extends ConfigProviderResolver {
     private ClassLoader classLoader;
 
 
+
     @Override
     public Config getConfig() {
         return getConfig(null);

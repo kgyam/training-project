@@ -4,6 +4,8 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigValue;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
+import org.example.ioc.configuration.configSource.JavaSystemConfigSource;
+import org.example.ioc.configuration.configSource.SystemConfigSource;
 
 import java.util.*;
 
@@ -18,18 +20,24 @@ import java.util.*;
  */
 public class DefaultConfig implements Config {
 
-    private List<ConfigSource> configSourceList = new LinkedList<> ();
+    private final List<ConfigSource> configSourceList = new LinkedList<> ();
 
-    //    private static Comparator<ConfigSource> configSourceComparator = Comparator.comparingInt (ConfigSource::getOrdinal);
     private static Comparator<ConfigSource> configSourceComparator = ((o1, o2) ->
-            Integer.compare (o2.getOrdinal (), o1.getOrdinal ())
-    );
+            Integer.compare (o2.getOrdinal (), o1.getOrdinal ()));
 
     public DefaultConfig() {
-        /*
+        init ();
+    }
+
+
+    private void init() {
+         /*
         加载spi下定义的所有ConfigSource,然后进行排序
+        默认操作系统config和java启动参数config
          */
         ServiceLoader<ConfigSource> serviceLoader = ServiceLoader.load (ConfigSource.class, getClass ().getClassLoader ());
+        configSourceList.add (new SystemConfigSource ());
+        configSourceList.add (new JavaSystemConfigSource ());
         serviceLoader.forEach (configSourceList::add);
         configSourceList.sort (configSourceComparator);
     }
@@ -69,7 +77,6 @@ public class DefaultConfig implements Config {
 
     @Override
     public <T> Optional<Converter<T>> getConverter(Class<T> aClass) {
-
 
         return Optional.empty ();
     }
