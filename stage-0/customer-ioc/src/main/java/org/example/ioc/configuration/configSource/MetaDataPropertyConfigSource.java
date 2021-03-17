@@ -16,9 +16,8 @@ import java.util.Set;
 public class MetaDataPropertyConfigSource implements ConfigSource {
 
     private final int ordinal = 3;
-    //    private final Map<String, String> properties;
     private final String configSourceName = "MetaDataPropertyConfigSource";
-    private static final String DEFAULT_PATH = "classpath*:/META-INF/customer-application.properties";
+    private static final String DEFAULT_PATH = "/META-INF/customer-application.properties";
     private final Properties properties = new Properties ();
     private final Set<String> propertyNames = new LinkedHashSet<> ();
 
