@@ -4,8 +4,6 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigValue;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
-import org.example.ioc.configuration.configSource.JavaSystemConfigSource;
-import org.example.ioc.configuration.configSource.SystemConfigSource;
 
 import java.util.*;
 
@@ -22,36 +20,19 @@ public class DefaultConfig implements Config {
 
     private final List<ConfigSource> configSourceList = new LinkedList<> ();
 
-    private static Comparator<ConfigSource> configSourceComparator = ((o1, o2) ->
-            Integer.compare (o2.getOrdinal (), o1.getOrdinal ()));
-
     public DefaultConfig() {
-        init ();
     }
 
-
-    private void init() {
-         /*
-        加载spi下定义的所有ConfigSource,然后进行排序
-        默认操作系统config和java启动参数config
-         */
-        ServiceLoader<ConfigSource> serviceLoader = ServiceLoader.load (ConfigSource.class, getClass ().getClassLoader ());
-        configSourceList.add (new SystemConfigSource ());
-        configSourceList.add (new JavaSystemConfigSource ());
-        serviceLoader.forEach (configSourceList::add);
-        configSourceList.sort (configSourceComparator);
-    }
 
     @Override
-    public <T> T getValue(String propertyName, Class<T> propertyType) {
-        return (T) getPropertyValue (propertyName);
-    }
-
-    @Override
-    public ConfigValue getConfigValue(String propertyName) {
+    public <T> T getValue(String s, Class<T> aClass) {
         return null;
     }
 
+    @Override
+    public ConfigValue getConfigValue(String s) {
+        return null;
+    }
 
     @Override
     public <T> Optional<T> getOptionalValue(String s, Class<T> aClass) {
@@ -60,41 +41,21 @@ public class DefaultConfig implements Config {
 
     @Override
     public Iterable<String> getPropertyNames() {
-        for (ConfigSource configSource : configSourceList) {
-            Set<String> propertyNames = configSource.getPropertyNames ();
-            if (!propertyNames.isEmpty ()) {
-                return Collections.unmodifiableSet (propertyNames);
-            }
-        }
-        return Collections.emptySet ();
+        return null;
     }
-
 
     @Override
     public Iterable<ConfigSource> getConfigSources() {
-        return Collections.unmodifiableList (this.configSourceList);
+        return null;
     }
 
     @Override
     public <T> Optional<Converter<T>> getConverter(Class<T> aClass) {
-
         return Optional.empty ();
     }
 
     @Override
     public <T> T unwrap(Class<T> aClass) {
-        throw new UnsupportedOperationException ("not support unwrap");
-    }
-
-
-    protected String getPropertyValue(String propertyName) {
-        String propertyValue = null;
-        for (ConfigSource configSource : configSourceList) {
-
-            if ((propertyValue = configSource.getValue (propertyName)) != null) {
-                break;
-            }
-        }
-        return propertyValue;
+        return null;
     }
 }
