@@ -1,16 +1,18 @@
 package org.example.web.mvc.servlet;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.example.ioc.factory.ComponentFactory;
-import org.example.ioc.factory.JndiComponentFactory;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.example.web.mvc.controller.Controller;
 import org.example.web.mvc.controller.PageController;
 import org.example.web.mvc.controller.RequestMethodInfo;
 import org.example.web.mvc.init.CommonInitializationHandler;
 import org.example.web.mvc.init.InitializationHandler;
 import org.example.web.mvc.jmx.DispatcherServletManager;
+import org.example.web.mvc.listener.ConfigInitializationListener;
 
-import javax.management.*;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -37,7 +39,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) {
         this.servletConfig = config;
-        initComponentFactory ();
         initHandleMethods ();
         try {
             MBeanServer mbs = ManagementFactory.getPlatformMBeanServer ();
@@ -49,11 +50,10 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void initComponentFactory() {
-        ComponentFactory factory = new JndiComponentFactory ();
-        servletConfig.getServletContext ().setAttribute (ComponentFactory.COMPONENT_FACTORY, factory);
-    }
 
+    /**
+     * 初始化控制器并缓存到集合中
+     */
     private void initHandleMethods() {
         //清空缓存
         controllerMap.clear ();
@@ -66,14 +66,17 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //  请求相关处理
 
+        ConfigProviderResolver configProviderResolver = (ConfigProviderResolver) request.getServletContext ().getAttribute (ConfigInitializationListener.CONFIG_PROVIDER_RESOLVER);
+        Config config = configProviderResolver.getConfig ();
+        ThreadLocal<Config> threadLocal = new ThreadLocal<> ();
+        threadLocal.set (config);
+        //  请求相关处理
         // requestURI = /a/hello/world
         String requestURI = request.getRequestURI ();
         // contextPath  = /a or "/" or ""
         String servletContextPath = request.getContextPath ();
         String prefixPath = servletContextPath;
-
         LOGGER.info ("requestURI : " + requestURI);
         LOGGER.info ("servletContextPath : " + servletContextPath);
         LOGGER.info ("prefixPath : " + prefixPath);
@@ -107,6 +110,8 @@ public class DispatcherServlet extends HttpServlet {
                 }
             } catch (Exception e) {
                 LOGGER.log (Level.SEVERE, e.getMessage (), e);
+            } finally {
+                threadLocal.remove ();
             }
         }
     }

@@ -83,6 +83,12 @@
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.kgyam</groupId>
+            <artifactId>customer-configuration</artifactId>
+            <version>v1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 </project>

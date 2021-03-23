@@ -7,9 +7,9 @@
 
     <!--servlet xml 配置规范 listener -> servlet -> filter
     请在配置的时候按照这个规范进行配置，避免加载顺序问题导致不可预知错误的情况发生-->
-    <listener>
-        <listener-class>org.example.user.web.listener.ComponentContextListener</listener-class>
-    </listener>
+<!--    <listener>-->
+    <!--        <listener-class>org.example.user.web.listener.ComponentContextListener</listener-class>-->
+    <!--    </listener>-->
 
     <servlet>
         <servlet-name>default</servlet-name>

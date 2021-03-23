@@ -1,0 +1,7 @@
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\factory\JndiComponentFactory.java
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\factory\AbstractComponentFactory.java
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\factory\ComponentFactory.java
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\aware\ComponentFactoryAware.java
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\context\ApplicationContext.java
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\destroy\DestroyedComponent.java
+E:\workspace\training-project\stage-0\customer-dependency-injection\src\main\java\org\example\ioc\init\DisposableComponent.java

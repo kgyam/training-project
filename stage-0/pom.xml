@@ -13,7 +13,8 @@
     <modules>
         <module>customer-web-mvc</module>
         <module>user-web</module>
-        <module>customer-ioc</module>
+        <module>customer-dependency-injection</module>
+        <module>customer-configuration</module>
     </modules>
 
     <properties>
@@ -107,8 +108,6 @@
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate.validator.version}</version>
             </dependency>
-
-
 
 
             <!-- MicroProfile -->

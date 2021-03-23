@@ -1,0 +1,7 @@
+org\example\ioc\init\DisposableComponent.class
+org\example\ioc\aware\ComponentFactoryAware.class
+org\example\ioc\factory\AbstractComponentFactory.class
+org\example\ioc\destroy\DestroyedComponent.class
+org\example\ioc\context\ApplicationContext.class
+org\example\ioc\factory\ComponentFactory.class
+org\example\ioc\factory\JndiComponentFactory.class
