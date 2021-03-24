@@ -20,7 +20,6 @@
 
 ---
 # 第四次作业
-- jar文件夹下存放的是对应的war包
 - **关于Servlet容器初始化相关配置和组件**，个人认为是跟web相关的一个过程，所以配置和组件的加载在**customer-web-mvc**下
 	- Servlet容器初始化代码具体路径在src/main/java/org/example/web/mvc/init/ServletInitializer.java(SPI方式)
 	- 监听器具体路径src/main/java/org/example/web/mvc/listener/路径下
