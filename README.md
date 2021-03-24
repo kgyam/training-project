@@ -16,4 +16,18 @@
 
   - 读取配置文件的方式需要使用spi的方式加载类，配置文件为META-INF/customer-application.properties（配置在web工程目录下）
 
+    
+  
+    
+  
+# 第四次作业
+- 关于Servlet相关Servlet的配置和组件加载，个人认为是跟web相关的一个过程，所以配置和组件的加载在**customer-web-mvc**下
+	- Servlet容器初始化代码具体路径在src/main/java/org/example/web/mvc/init/ServletInitializer.java(SPI方式)
+	- 监听器具体路径src/main/java/org/example/web/mvc/listener/路径下
+	- Servlet配置源扩展的代码路径src/main/java/org/example/web/mvc/configuration/ServletConfigSource.java
+	
+- 通过ThreadLocal获取Config，这里通过重新扩展一个基于ThreadLocal实现的ThreadLocalConfigProviderResolver ，具体路径src/main/java/org/example/configuration/ThreadLocalConfigProviderResolver.java。(但这里感觉个人对于需求理解有点问题)
+
+  - ConfigProviderResolver基于SPI扩展
+
   
