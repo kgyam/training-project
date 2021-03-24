@@ -22,6 +22,8 @@ public abstract class AbstractConfigProviderResolver extends ConfigProviderResol
     }
 
     protected Config newConfig(ClassLoader classLoader) {
-        return newConfigBuilder (classLoader).build ();
+        return newConfigBuilder (classLoader).addDefaultSources ().addDiscoveredSources ()
+                .addDiscoveredConverters ().build ();
     }
+
 }

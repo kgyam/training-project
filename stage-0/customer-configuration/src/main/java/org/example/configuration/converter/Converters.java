@@ -13,6 +13,18 @@ import java.util.*;
  * @since
  */
 public class Converters implements Iterable<Converter> {
+
+
+    public Converters() {
+        this (Thread.currentThread ().getContextClassLoader ());
+    }
+
+
+    public Converters(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+
     public static final int DEFAULT_PRIORITY = 100;
 
     private final Map<Class<?>, PriorityQueue<PrioritizedConverter>> typedConverters = new HashMap<> ();
@@ -108,14 +120,18 @@ public class Converters implements Iterable<Converter> {
         return convertedType;
     }
 
-    public Converters() {
-        this (Thread.currentThread ().getContextClassLoader ());
-    }
 
-    public Converters(ClassLoader classLoader) {
-        this.classLoader = classLoader;
+    public List<Converter> getConverters(Class<?> convertedType) {
+        PriorityQueue<PrioritizedConverter> prioritizedConverters = typedConverters.get (convertedType);
+        if (prioritizedConverters == null || prioritizedConverters.isEmpty ()) {
+            return Collections.emptyList ();
+        }
+        List<Converter> converters = new LinkedList<> ();
+        for (PrioritizedConverter prioritizedConverter : prioritizedConverters) {
+            converters.add (prioritizedConverter.getConverter ());
+        }
+        return converters;
     }
-
 
     private void assertConverter(Converter<?> converter) {
         Class<?> converterClass = converter.getClass ();
@@ -129,6 +145,12 @@ public class Converters implements Iterable<Converter> {
 
     @Override
     public Iterator<Converter> iterator() {
-        return null;
+        List<Converter> allConverters = new LinkedList<> ();
+        for (PriorityQueue<PrioritizedConverter> converters : typedConverters.values ()) {
+            for (PrioritizedConverter converter : converters) {
+                allConverters.add (converter.getConverter ());
+            }
+        }
+        return allConverters.iterator ();
     }
 }

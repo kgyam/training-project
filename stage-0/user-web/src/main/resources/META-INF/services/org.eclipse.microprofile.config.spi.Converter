@@ -1,0 +1,8 @@
+org.example.configuration.converter.BooleanConverter
+org.example.configuration.converter.ByteConverter
+org.example.configuration.converter.DoubleConverter
+org.example.configuration.converter.FloatConverter
+org.example.configuration.converter.IntegerConverter
+org.example.configuration.converter.LongConverter
+org.example.configuration.converter.ShortConverter
+org.example.configuration.converter.StringConverter

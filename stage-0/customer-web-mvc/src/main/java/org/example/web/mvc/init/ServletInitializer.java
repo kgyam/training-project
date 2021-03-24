@@ -5,7 +5,6 @@ import org.example.web.mvc.listener.ConfigInitializationListener;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import java.util.Set;
 
 /**
@@ -17,6 +16,7 @@ public class ServletInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(Set<Class<?>> set, ServletContext servletContext) {
         //添加listener
+        servletContext.setAttribute ("application.name","servlet-application");
         servletContext.addListener (ConfigInitializationListener.class);
         servletContext.addListener (ComponentFactoryInitializationListener.class);
     }

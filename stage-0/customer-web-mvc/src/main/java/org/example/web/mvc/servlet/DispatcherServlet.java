@@ -1,18 +1,12 @@
 package org.example.web.mvc.servlet;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.example.web.mvc.controller.Controller;
 import org.example.web.mvc.controller.PageController;
 import org.example.web.mvc.controller.RequestMethodInfo;
 import org.example.web.mvc.init.CommonInitializationHandler;
 import org.example.web.mvc.init.InitializationHandler;
-import org.example.web.mvc.jmx.DispatcherServletManager;
-import org.example.web.mvc.listener.ConfigInitializationListener;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -21,13 +15,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//@WebServlet(loadOnStartup = 1, urlPatterns = "/*")
 public class DispatcherServlet extends HttpServlet {
 
     private final Map<String, Object> controllerMap = new ConcurrentHashMap<> ();
@@ -40,14 +34,14 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) {
         this.servletConfig = config;
         initHandleMethods ();
-        try {
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer ();
-            ObjectName name = new ObjectName ("org.example.web.mvc.jmx:type=DispatchServletManager");
-            DispatcherServletManager mBean = new DispatcherServletManager (this);
-            mbs.registerMBean (mBean, name);
-        } catch (Exception e) {
-            throw new RuntimeException (e);
-        }
+//        try {
+//            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer ();
+//            ObjectName name = new ObjectName ("org.example.web.mvc.jmx:type=DispatchServletManager");
+//            DispatcherServletManager mBean = new DispatcherServletManager (this);
+//            mbs.registerMBean (mBean, name);
+//        } catch (Exception e) {
+//            throw new RuntimeException (e);
+//        }
     }
 
 
@@ -61,16 +55,16 @@ public class DispatcherServlet extends HttpServlet {
         //初始化controller方法
         InitializationHandler initializationHandler = new CommonInitializationHandler (this.servletConfig, this);
         initializationHandler.init ();
+        methodMap.forEach ((k, v) -> {
+            LOGGER.info ("key:"+k);
+            LOGGER.info ("value:"+v.toString ());
+            LOGGER.info ("---------------------------------");
+        });
     }
 
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        ConfigProviderResolver configProviderResolver = (ConfigProviderResolver) request.getServletContext ().getAttribute (ConfigInitializationListener.CONFIG_PROVIDER_RESOLVER);
-        Config config = configProviderResolver.getConfig ();
-        ThreadLocal<Config> threadLocal = new ThreadLocal<> ();
-        threadLocal.set (config);
         //  请求相关处理
         // requestURI = /a/hello/world
         String requestURI = request.getRequestURI ();
@@ -80,18 +74,20 @@ public class DispatcherServlet extends HttpServlet {
         LOGGER.info ("requestURI : " + requestURI);
         LOGGER.info ("servletContextPath : " + servletContextPath);
         LOGGER.info ("prefixPath : " + prefixPath);
+        try {
+            RequestMethodInfo requestMethodInfo = methodMap.get (requestURI);
+            if (ObjectUtils.notEqual (requestMethodInfo, null)) {
+                Controller controller = requestMethodInfo.getController ();
+                Method requestMethod = requestMethodInfo.getRequestMethod ();
+                String httpMethod = request.getMethod ();
+                if (!requestMethodInfo.isSupportHttpMethod (httpMethod)) {
+                    //HTTP 方法不支持
+                    LOGGER.info ("不支持该HTTP方法");
+                    response.setStatus (HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                    return;
+                }
 
-        RequestMethodInfo requestMethodInfo = methodMap.get (requestURI);
-        if (ObjectUtils.notEqual (requestMethodInfo, null)) {
-            Controller controller = requestMethodInfo.getController ();
-            Method requestMethod = requestMethodInfo.getRequestMethod ();
-            String httpMethod = request.getMethod ();
-            if (!requestMethodInfo.isSupportHttpMethod (httpMethod)) {
-                //HTTP 方法不支持
-                response.setStatus (HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                return;
-            }
-            try {
+                LOGGER.info ("调用controller方法");
                 Object result = requestMethod.invoke (controller, request, response);
                 if (controller instanceof PageController) {
                     if (!requestMethod.getReturnType ().isAssignableFrom (String.class)) {
@@ -108,11 +104,10 @@ public class DispatcherServlet extends HttpServlet {
                     // TODO: 2021/3/2
                     LOGGER.info ("not finish part");
                 }
-            } catch (Exception e) {
-                LOGGER.log (Level.SEVERE, e.getMessage (), e);
-            } finally {
-                threadLocal.remove ();
+
             }
+        } catch (Exception e) {
+            LOGGER.log (Level.SEVERE, e.getMessage (), e);
         }
     }
 

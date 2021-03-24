@@ -1,5 +1,6 @@
 package org.example.web.mvc.configuration;
 
+import org.example.configuration.source.DynamicConfigSource;
 import org.example.configuration.source.MapBasedConfigSource;
 
 import javax.servlet.ServletContext;
@@ -16,13 +17,14 @@ public class ServletConfigSource extends MapBasedConfigSource {
 
     private ServletContext servletContext;
 
+
     public ServletConfigSource(ServletContext servletContext) {
-        super ("ServletConfigSource", 500);
         this.servletContext = servletContext;
+        this.initMapBasedConfigSource ("ServletConfigSource", 500);
     }
 
     @Override
-    public void getConfigData(Map data) throws Throwable {
+    public Map prepareConfigData() throws Throwable {
         Map<String, String> servletAttributeData = new LinkedHashMap<> ();
         Enumeration<String> parameterNames = servletContext.getInitParameterNames ();
         while (parameterNames.hasMoreElements ()) {
@@ -30,6 +32,6 @@ public class ServletConfigSource extends MapBasedConfigSource {
             String parameterVal = (String) servletContext.getAttribute (parameterName);
             servletAttributeData.putIfAbsent (parameterName, parameterVal);
         }
-        data = servletAttributeData;
+        return servletAttributeData;
     }
 }

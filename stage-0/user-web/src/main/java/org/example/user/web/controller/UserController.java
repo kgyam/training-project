@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
+import static org.example.web.mvc.listener.ConfigInitializationListener.CONFIG_PROVIDER_RESOLVER;
+
 /**
  * @author kg yam
  * @date 2021-03-01 17:33
@@ -25,8 +27,8 @@ public class UserController implements PageController {
     @Resource(name = "bean/UserService")
     private UserService userService;
 
-    @Resource(name = "bean/ConfigProviderResolver")
-    private ConfigProviderResolver configProviderResolver;
+//    @Resource(name = "bean/ConfigProviderResolver")
+//    private ConfigProviderResolver configProviderResolver;
 
     @RequestMethod({HttpMethod.POST})
     @RequestMapping(value = "/registry")
@@ -61,6 +63,7 @@ public class UserController implements PageController {
     @RequestMethod({HttpMethod.GET})
     @RequestMapping(value = "/application")
     public String getApplicationName(HttpServletRequest request, HttpServletResponse response) {
+        ConfigProviderResolver configProviderResolver = (ConfigProviderResolver) request.getServletContext ().getAttribute (CONFIG_PROVIDER_RESOLVER);
         if (configProviderResolver == null) {
             logger.warning ("configProviderResolver instantiation fail");
         }

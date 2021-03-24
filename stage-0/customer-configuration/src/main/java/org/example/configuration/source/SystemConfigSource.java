@@ -16,7 +16,7 @@ public class SystemConfigSource extends MapBasedConfigSource {
 
 
     @Override
-    public void getConfigData(Map data) throws Throwable {
-        data = System.getenv ();
+    public Map prepareConfigData() throws Throwable {
+        return System.getenv ();
     }
 }

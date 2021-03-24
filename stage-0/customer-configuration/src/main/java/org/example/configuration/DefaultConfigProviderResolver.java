@@ -2,7 +2,6 @@ package org.example.configuration;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -19,7 +18,7 @@ public class DefaultConfigProviderResolver extends AbstractConfigProviderResolve
 
     @Override
     public Config getConfig() {
-        return getConfig (null);
+        return getConfig (getClass ().getClassLoader ());
     }
 
     @Override
@@ -29,12 +28,12 @@ public class DefaultConfigProviderResolver extends AbstractConfigProviderResolve
 
     @Override
     public ConfigBuilder getBuilder() {
-        return null;
+        return newConfigBuilder (null);
     }
 
     @Override
     public void registerConfig(Config config, ClassLoader classLoader) {
-        throw new UnsupportedOperationException ("registerConfig not support");
+        this.configsRepository.put (classLoader, config);
     }
 
     @Override

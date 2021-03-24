@@ -6,12 +6,14 @@ import org.example.ioc.factory.JndiComponentFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /**
  * @author kg yam
  * @date 2021-03-23 11:12
  * @since
  */
+@WebListener
 public class ComponentFactoryInitializationListener implements ServletContextListener {
 
     private ServletContext servletContext;

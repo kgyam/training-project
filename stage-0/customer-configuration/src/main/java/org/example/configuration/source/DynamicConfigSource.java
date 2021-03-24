@@ -17,7 +17,7 @@ public class DynamicConfigSource extends MapBasedConfigSource {
     }
 
     @Override
-    public void getConfigData(Map data) throws Throwable {
-        data = this.configData;
+    public Map prepareConfigData() throws Throwable {
+        return this.configData;
     }
 }

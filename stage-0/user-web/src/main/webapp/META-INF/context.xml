@@ -40,8 +40,8 @@
               factory="org.apache.naming.factory.BeanFactory"/>
 
 
-    <Resource name="bean/ConfigProviderResolver" auth="Container"
-              type="org.example.ioc.configuration.DefaultConfigProviderResolver"
-              factory="org.apache.naming.factory.BeanFactory"/>
+<!--    <Resource name="bean/ConfigProviderResolver" auth="Container"-->
+    <!--              type="org.example.configuration.DefaultConfigProviderResolver"-->
+    <!--              factory="org.apache.naming.factory.BeanFactory"/>-->
 
 </Context>

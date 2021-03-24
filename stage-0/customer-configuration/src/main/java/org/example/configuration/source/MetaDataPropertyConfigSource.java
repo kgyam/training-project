@@ -11,20 +11,20 @@ import java.util.Properties;
  */
 public class MetaDataPropertyConfigSource extends MapBasedConfigSource {
 
-    private static final String DEFAULT_PATH = "classpath*:/META-INF/customer-application.properties";
+    private static final String DEFAULT_PATH = "/META-INF/customer-application.properties";
 
     public MetaDataPropertyConfigSource() {
         super ("MetaDataPropertyConfigSource", 3);
     }
 
     @Override
-    public void getConfigData(Map data) throws Throwable {
+    public Map prepareConfigData() throws Throwable {
         Properties properties = new Properties ();
         InputStream inputStream = this.getClass ().getResourceAsStream (DEFAULT_PATH);
         if (inputStream == null) {
-            return;
+            return null;
         }
         properties.load (inputStream);
-        data = properties;
+        return properties;
     }
 }

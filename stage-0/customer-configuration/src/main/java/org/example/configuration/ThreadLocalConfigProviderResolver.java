@@ -2,7 +2,6 @@ package org.example.configuration;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
 /**
  * @author kg yam

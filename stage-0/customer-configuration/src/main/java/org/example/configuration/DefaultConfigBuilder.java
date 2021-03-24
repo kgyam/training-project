@@ -69,6 +69,7 @@ public class DefaultConfigBuilder implements ConfigBuilder {
 
     @Override
     public Config build() {
-        return new DefaultConfig ();
+        Config config = new DefaultConfig (configSources, converters);
+        return config;
     }
 }
